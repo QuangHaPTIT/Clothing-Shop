@@ -1,0 +1,86 @@
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Danh Sách Sản Phẩm</h4>
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle text-nowrap">
+                    <thead>
+                        <tr>
+                            <th class="text-dark font-medium fs-4">Id</th>
+                            <th class="text-dark font-medium fs-4">Name</th>
+                            <th class="text-dark font-medium fs-4">Price</th>
+                            <th class="text-dark font-medium fs-4">Description</th>
+                            <th class="text-dark font-medium fs-4">Edit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor='let p of products'>
+                            <td>
+                                {{ p.id }}
+                            </td>
+                            <td>
+                                {{p.name}}
+                            </td>
+                            <td>
+                                {{p.price}}
+                            </td>
+                            <td>
+                                {{p.description}}
+                            </td>
+                            <td>
+                              <button style="border-radius: 20px;" type="button" class="btn btn-secondary" (click)="navChangeProduct(p.id)">Sửa</button>
+                              <button style="border-radius: 20px;" type="button" class="btn btn-danger" (click)="deleteProduct(p.id)">Xóa</button>
+                          </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+  </div>
+</div>
+<!-- <nav aria-label="Page navigation example">
+  <ul class="pagination justify-content-center ">
+    <li class="page-item" *ngIf="currentPage > 1">
+      <a class="page-link" aria-label="Previous" (click)="onPageChange(currentPage - 1)">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    <ng-container *ngFor="let page of visiblePages">
+      <li class="page-item" [ngClass]="{'active': page === currentPage}">
+          <a class="page-link" (click)="onPageChange(page)">{{ page }}</a>
+      </li>
+  </ng-container>
+    <li class="page-item" *ngIf="currentPage < totlaPages">
+      <a class="page-link" href="#" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+  </ul>
+</nav> -->
+<nav aria-label="Page navigation example">
+  <ul class="pagination justify-content-center">
+    <li class="page-item" *ngIf="currentPage > 1">
+      <a class="page-link" aria-label="Previous" (click)="onPageChange(currentPage - 1)">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    <ng-container *ngFor="let page of visiblePages">
+      <li class="page-item" [ngClass]="{'active': page === currentPage}">
+          <a class="page-link" (click)="onPageChange(page)">{{ page }}</a>
+      </li>
+  </ng-container>
+    <li class="page-item">
+      <a class="page-link" href="#" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+

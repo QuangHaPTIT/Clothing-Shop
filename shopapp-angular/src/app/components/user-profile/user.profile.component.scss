@@ -1,0 +1,38 @@
+@import '../../styles/shared-styles.scss';
+.container {
+  color: white;
+}
+.intro-section {
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+.product-header {
+  color: $shopapp-tint-color;
+}
+.form-control {
+  border: 1px solid rgb(29, 33, 54);
+  color: #343a40;
+}
+
+.form-control:focus {
+  border-color: #343a40;
+  // background-color:  $shopapp-background-color;
+}
+.form-label {
+  color: #343a40;
+}
+.product-header {
+  color: $shopapp-tint-color;
+}
+.product-order {
+  color: $shopapp-title-color;
+}
+.btn-accept {
+  background: linear-gradient(to right, $shopapp-tint-color, $shopapp-color);
+  color: white;
+    width: 50%;
+    padding: 10px 0;
+    margin-top: 20px;
+    border: none;
+}

@@ -1,0 +1,88 @@
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Danh Sách Order</h4>
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle text-nowrap">
+                    <thead>
+                        <tr>
+                            <th class="text-dark font-medium fs-4">Id</th>
+                            <th class="text-dark font-medium fs-4">User Id</th>
+                            <th class="text-dark font-medium fs-4">Full Name</th>
+                            <th class="text-dark font-medium fs-4">Email</th>
+                            <th class="text-dark font-medium fs-4">Phone Number</th>
+                            <th class="text-dark font-medium fs-4">Address</th>
+                            <th class="text-dark font-medium fs-4">Order Date</th>
+                            <th class="text-dark font-medium fs-4">Status</th>
+                            <th class="text-dark font-medium fs-4">Total Money</th>
+                            <th class="text-dark font-medium fs-4">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let order of orders">
+                            <td>
+                                {{ order.id }}
+                            </td>
+                            <td>
+                                {{order.user_id}}
+                            </td>
+                            <td>
+                                {{order.fullname}}
+                            </td>
+                            <td>
+                                {{order.email}}
+                            </td>
+                            <td>
+                              {{order.phone_number}}
+                          </td>
+                          <td>
+                              {{order.address}}
+                          </td>
+                          <td>
+                              {{order.order_date}}
+                          </td>
+                          <td>
+                              {{order.status}}
+                          </td>
+                          <td>
+                            {{order.total_money}}
+                        </td>
+                            <td>
+                              <div class="card-footer p-4 pt-0 border-top-0 bg-transparent" (click)="viewDetails(order.id)">
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" >Sửa</a></div>
+                              </div>
+                              <div class="card-footer p-4 pt-0 border-top-0 bg-transparent" (click)="deleteOrder(order.id)">
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto">Xóa</a></div>
+                            </div>
+                          </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+  </div>
+</div>
+<nav aria-label="Page navigation example">
+  <ul class="pagination justify-content-center ">
+    <li class="page-item" *ngIf="currentPage > 1">
+      <a class="page-link" aria-label="Previous" (click)="onPageChange(currentPage - 1)">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    <ng-container *ngFor="let page of visiblePages">
+      <li class="page-item" [ngClass]="{'active': page === currentPage}">
+          <a class="page-link" (click)="onPageChange(page)">{{ page }}</a>
+      </li>
+  </ng-container>
+    <li class="page-item" *ngIf="currentPage < totlaPages">
+      <a class="page-link" href="#" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+  </ul>
+</nav>

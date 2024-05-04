@@ -1,0 +1,234 @@
+<app-header></app-header>
+<div class="container">
+  <div class="intro-section">
+    <h1 class="mt-4 mb-4">Hãy Đặt Theo Sở Thích Của Bạn</h1>
+  </div>
+  <form [formGroup]="orderForm">
+    <!-- Thêm form và gán formGroup -->
+    <div class="row">
+      <div class="col-md-6">
+        <h2 class="product-header">Thông tin người nhận</h2>
+        <div class="mb-3">
+          <label for="fullname" class="form-label">Họ và tên</label>
+          <input
+            type="text"
+            formControlName="fullname"
+            class="form-control"
+            id="fullname"
+            [class.is-invalid]="
+              orderForm.get('fullname')!.invalid &&
+              orderForm.get('fullname')!.touched
+            "
+          />
+          <div
+            *ngIf="
+              orderForm.get('fullname')!.invalid &&
+              orderForm.get('fullname')!.touched
+            "
+            class="invalid-feedback"
+          >
+            Họ và tên là trường bắt buộc.
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input
+            type="text"
+            formControlName="email"
+            class="form-control"
+            id="email"
+            [class.is-invalid]="
+              orderForm.get('email')!.invalid && orderForm.get('email')!.touched
+            "
+          />
+          <div
+            *ngIf="
+              orderForm.get('email')!.invalid && orderForm.get('email')!.touched
+            "
+            class="invalid-feedback"
+          >
+            {{
+              orderForm.get("email")!.hasError("email")
+                ? "Email không hợp lệ"
+                : "Email là trường bắt buộc"
+            }}
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="phone" class="form-label">Số điện thoại</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="phone_number"
+            placeholder="Số điện thoại"
+            required
+            id="phone"
+            [class.is-invalid]="
+              orderForm.get('phone_number')!.invalid &&
+              orderForm.get('phone_number')!.touched
+            "
+          />
+          <div
+            *ngIf="
+              orderForm.get('phone_number')!.invalid &&
+              orderForm.get('phone_number')!.touched
+            "
+            class="invalid-feedback"
+          >
+            Số điện thoại là trường bắt buộc và ít nhất 6 ký tự.
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="address" class="form-label">Địa chỉ</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="address"
+            placeholder="Địa chỉ"
+            required
+            id="address"
+            [class.is-invalid]="
+              orderForm.get('address')!.invalid &&
+              orderForm.get('address')!.touched
+            "
+          />
+          <div
+            *ngIf="
+              orderForm.get('address')!.invalid &&
+              orderForm.get('address')!.touched
+            "
+            class="invalid-feedback"
+          >
+            Địa chỉ là trường bắt buộc và ít nhất 5 ký tự.
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="note" class="form-label">Ghi chú</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="note"
+            placeholder="Ghi chú"
+            required
+            id="note"
+          />
+        </div>
+        <div class="mb-3">
+          <label for="shippingMethod">Phương thức vận chuyển</label>
+          <select
+            class="form-control"
+            id="shippingMethod"
+            formControlName="shipping_method"
+          >
+            <option value="express">Nhanh (Express)</option>
+            <option value="normal">Thường (Normal)</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="paymentMethod">Phương thức thanh toán</label>
+          <select
+            class="form-control"
+            id="paymentMethod"
+            formControlName="payment_method"
+          >
+            <option value="cod">Thanh toán khi nhận hàng (COD)</option>
+            <option value="other">Thanh toán khác</option>
+          </select>
+        </div>
+        <!-- </form> -->
+      </div>
+      <div class="col-md-6">
+        <h2 class="product-order">Sản phẩm trong giỏ hàng</h2>
+        <table>
+          <thead>
+            <tr>
+              <th scope="col" class="text-start">Sản phẩm</th>
+              <th scope="col">Số lượng</th>
+              <th scope="col">Đơn giá</th>
+              <th scope="col">Tổng giá</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let item of cartItems">
+              <tr>
+                <td>
+                  <div class="product-info">
+                    <img
+                      [src]="item.product.thumbnail"
+                      alt="Product Image"
+                      class="product-image"
+                    />
+                    <span class="product-name">{{ item.product.name }}</span>
+                  </div>
+                </td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.product.price | number : "1.2-2" }}</td>
+                <td>
+                  {{ item.product.price * item.quantity | number : "1.2-2" }}
+                </td>
+                <td>
+                  <a class="nav-link" (click)="removeItem(item.product.id)">
+                    <i class="fa-solid fa-trash-can"></i>
+                    Xóa
+                  </a>
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+        <div class="text-start mt-3">
+          <h4 class="header-text text-end">
+            Tổng giá: {{ totalAmount | number : "1.2-2" }}
+          </h4>
+        </div>
+        <div class="mt-3">
+          <h4 class="product-header">Nhập coupon</h4>
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Nhập coupon" />
+            <button class="btn btn-gradient" type="button">Áp dụng</button>
+          </div>
+        </div>
+        <div class="text-start mt-3">
+          <button (click)="placeOrder()" class="btn btn-gradient" type="button">
+            Đặt hàng
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+  <section class="py-5">
+    <div class="container px-4 px-lg-5 mt-5">
+      <h2 class="fw-bolder mb-4">Sản phẩm bán chạy</h2>
+      <div class="row gx-4 gx-lg-5 justify-content-center">
+        <div class="col" *ngFor="let product of products">
+          <div class="card h-90" (click)="onProductClick(product.id)">
+            <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">
+              Sale
+            </div>
+            <img class="card-img-top" style="height: 400px; width: auto;" [src]="product.url" alt="..." />
+            <div class="card-body p-4">
+              <div class="text-center">
+                <h5 class="fw-bolder">{{ product.name }}</h5>
+                <div class="d-flex justify-content-center small text-warning mb-2">
+                  <div class="bi-star-fill"></div>
+                  <div class="bi-star-fill"></div>
+                  <div class="bi-star-fill"></div>
+                  <div class="bi-star-fill"></div>
+                  <div class="bi-star-fill"></div>
+                </div>
+                <span class="text-muted text-decoration-line-through">{{product.price}}VND</span>
+                {{product.price}}VND
+              </div>
+            </div>
+            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+              <div class="text-center" (click)="addToCart(product.id)">
+                <a class="btn btn-outline-dark mt-auto btn-hover">Add to cart</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

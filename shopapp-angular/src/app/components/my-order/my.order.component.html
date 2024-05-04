@@ -1,0 +1,53 @@
+<app-header></app-header>
+<div class="col-md-9 mx-auto">
+  <h2 class="product-order mt-4 mb-4">Sản phẩm đã mua</h2>
+  <table>
+    <thead>
+      <tr>
+        <th scope="col" class="text-start">Sản phẩm</th>
+        <th scope="col">Số lượng</th>
+        <th scope="col">Đơn giá</th>
+        <th scope="col">Tổng giá</th>
+        <th scope="col">Tình trạng</th>
+        <th scope="col">Ngày đặt hàng</th>
+        <th scope="col">Hủy đơn hàng</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let item of orderData">
+        <ng-container *ngFor="let order_detail of item.order_details">
+          <tr
+
+            class="product-item cursor-pointer"
+          >
+            <td (click)="detailOrder(item.id)">
+              <div class="product-info">
+                <img
+                  [src]="order_detail.product.url"
+                  alt="Product Image"
+                  class="product-image"
+                />
+                <span class="product-name">{{
+                  order_detail.product.name
+                }}</span>
+              </div>
+            </td>
+            <td (click)="detailOrder(item.id)">{{ order_detail.number_of_products }}</td>
+            <td (click)="detailOrder(item.id)">{{ order_detail.product.price }}</td>
+            <td (click)="detailOrder(item.id)">{{ order_detail.product.price * 2 }}</td>
+            <td (click)="detailOrder(item.id)" style="color: chartreuse">{{ item.status }}</td>
+            <td (click)="detailOrder(item.id)">{{ item.order_date }}</td>
+            <td>
+              <a
+                class="nav-link cursor-pointer"
+                (click)="confirmDelete(item.status, order_detail.id)"
+              >
+                <i class="fa-solid fa-trash-can"></i>
+              </a>
+            </td>
+          </tr>
+        </ng-container>
+      </ng-container>
+    </tbody>
+  </table>
+</div>

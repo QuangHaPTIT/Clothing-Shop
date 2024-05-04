@@ -1,0 +1,89 @@
+<form [formGroup]="productForm">
+  <!-- div(class="form-group" upload-image)
+  label(for="thumbnail") Ảnh
+  input(
+      type="file"
+      class="form-control-file"
+      id="thumbnail"
+      name="thumbnail"
+      accept = "image/*"
+      upload-image-input
+  )
+
+  img(
+      src=product.thumbnail,
+      upload-image-preview
+      class = "image-preview"
+  )  -->
+  <div class="row overflow-y-auto">
+    <div class="col-md-6 mx-auto">
+      <h2 class="product-header mb-5">Thông tin sản phẩm</h2>
+      <div class="form-group upload-image mb-3">
+        <label for="thumbnail" class="d-block">Ảnh</label>
+        <input
+          type="file"
+          class="form-control-file form-control-sm small-input"
+          id="thumbnail"
+          name="thumbnail"
+          accept="image/*"
+          upload-image-input
+          (change)="onFileSelected($event)"
+        />
+        <img [src]="productResponse?.thumbnail" upload-image-preview class="card-img-top small-image" style="width: 50%;" />
+      </div>
+      <div class="form-group"></div>
+      <div class="mb-3">
+        <label for="product_name" class="form-label">Product-name</label>
+        <input
+          type="text"
+          placeholder="Tên sản phẩm"
+          formControlName="product_name"
+          class="form-control"
+          id="product_name"
+        />
+      </div>
+      <div class="mb-3">
+        <label for="price" class="form-label">Price</label>
+        <input
+          type="number"
+          placeholder=""
+          formControlName="price"
+          class="form-control"
+          id="price"
+        />
+      </div>
+      <!-- <div class="mb-3">
+        <label for="thumbnail" class="form-label">Thumbnail</label>
+        <input
+          type="text"
+          placeholder=""
+          formControlName="thumbnail"
+          class="form-control"
+          id="thumbnail"
+        />
+      </div> -->
+      <div class="mb-3">
+        <label for="text" class="form-label">Description</label>
+        <input
+          type="text"
+          placeholder=""
+          class="form-control"
+          formControlName="description"
+          id="description"
+        />
+      </div>
+      <label for="thumbnail" class="form-label">Product status</label>
+      <div class="form-group col-md-3">
+        <select class="form-control access-right">
+          <option (click)="selectStatus('active')">Active</option>
+          <option (click)="selectStatus('inactive')">Inactive</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="text-center">
+    <button type="button" (click)="save()" class="btn btn-success">
+      Lưu thay đổi
+    </button>
+  </div>
+</form>

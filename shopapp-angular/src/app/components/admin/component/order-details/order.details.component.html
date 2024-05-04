@@ -1,0 +1,62 @@
+<div class="container">
+  <h1 class="mt-5">Order Details</h1>
+  <div class="row mt-4">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          Order Information
+        </div>
+        <div class="card-body">
+          <p><strong>Order ID:</strong> {{orderResponse.id}}</p>
+          <p><strong>User Id:</strong> {{orderResponse.user_id}}</p>
+          <p><strong>Customer Name:</strong> {{orderResponse.fullname}}</p>
+          <p><strong>Email:</strong> {{orderResponse.email}}</p>
+          <p><strong>Address:</strong> {{orderResponse.address}}</p>
+          <p><strong>Order Date:</strong> {{orderResponse.order_date}}</p>
+          <div class="form-group">
+            <label for="statusSelect">Order Status:</label>
+            <select class="form-control" id="statusSelect"
+            [(ngModel)]="orderResponse.status"
+            >
+              <option value="pending">Pending</option>
+              <option value="processing">Processing</option>
+              <option value="shipped">Shipped</option>
+              <option value="delivered">Delivered</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          Order Items
+        </div>
+        <div class="card-body">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Product Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let order_detail of orderResponse.order_details; let i = index">
+                <td>{{order_detail.product.name}}</td>
+                <td>${{order_detail.price}}</td>
+                <td>{{order_detail.number_of_products}}</td>
+                <td>${{order_detail.total_money}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card-footer p-4 pt-0 border-top-0 bg-transparent" (click)="saveOrder()">
+    <div class="text-center"><a class="btn btn-outline-dark mt-auto">Save</a></div>
+  </div>
+</div>
