@@ -10,12 +10,18 @@ export class CartService {
 
   constructor() {
     // Lấy dữ liệu giỏ hàng từ localStorage khi khởi tạo service
-    const storedCart = localStorage.getItem('cart');
+    const storedCart = localStorage.getItem(this.getCartKey());
     if (storedCart) {
       this.cart = new Map(JSON.parse(storedCart));
     }
   }
 
+  private getCartKey():string {
+    const userResponseJson = localStorage.getItem('user');
+    const userResponse = JSON.parse(userResponseJson!);
+    debugger
+    return `cart:${userResponse.id}`
+  }
   addToCart(productId: number, quantity: number = 1): void {
     debugger
     if (this.cart.has(productId)) {
@@ -29,18 +35,23 @@ export class CartService {
     this.saveCartToLocalStorage();
   }
 
+
   getCart(): Map<number, number> {
     return this.cart;
   }
   // Lưu trữ giỏ hàng vào localStorage
   private saveCartToLocalStorage(): void {
     debugger
-    localStorage.setItem('cart', JSON.stringify(Array.from(this.cart.entries())));
+    localStorage.setItem(this.getCartKey(), JSON.stringify(Array.from(this.cart.entries())));
   }
   // Hàm xóa dữ liệu giỏ hàng và cập nhật Local Storage
   clearCart(): void {
     this.cart.clear(); // Xóa toàn bộ dữ liệu trong giỏ hàng
     this.saveCartToLocalStorage(); // Lưu giỏ hàng mới vào Local Storage (trống)
+  }
+  setCart(cart : Map<number, number>) {
+    this.cart = cart ?? new Map<number, number>();
+    this.saveCartToLocalStorage();
   }
   removeProductToCart(productId: number): void {
     this.cart.delete(productId);

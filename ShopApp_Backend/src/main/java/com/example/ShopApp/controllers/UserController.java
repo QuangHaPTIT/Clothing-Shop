@@ -3,11 +3,10 @@ package com.example.ShopApp.controllers;
 import com.example.ShopApp.dtos.RefreshTokenDTO;
 import com.example.ShopApp.dtos.UserDTO;
 import com.example.ShopApp.dtos.UserLoginDTO;
+import com.example.ShopApp.entity.BaseEntity;
 import com.example.ShopApp.entity.Role;
 import com.example.ShopApp.entity.User;
-import com.example.ShopApp.response.LoginResponse;
-import com.example.ShopApp.response.TokenResponse;
-import com.example.ShopApp.response.UserResponse;
+import com.example.ShopApp.response.*;
 import com.example.ShopApp.sevices.impl.TokenServiceImpl;
 import com.example.ShopApp.sevices.impl.UserSeviceImpl;
 import com.example.ShopApp.components.LocalizationUtils;
@@ -16,7 +15,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
+
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -130,5 +133,69 @@ public class UserController {
                 .roles(user.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList()))
                 .build();
         return ResponseEntity.ok(loginResponse);
+    }
+
+    @PutMapping("/resetPassword/{userId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> resetPassword(@Valid @PathVariable Long userId) throws Exception{
+        try{
+            ResetPasswordResponse resetPasswordResponse = userSevice.resetPassword(userId);
+            return ResponseEntity.ok(resetPasswordResponse);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(BaseResponse.builder()
+                    .message(e.getMessage())
+                    .build()
+            );
+        }
+    }
+
+    @GetMapping("")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> getAllUser(
+            @RequestParam(defaultValue = "", required = false) String keyword,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "12") int limit
+    ){
+        try{
+            Page<UserResponse> userResponsePage = userSevice.getAllUser(keyword, page, limit);
+            return ResponseEntity.ok(
+                    BaseResponse.builder()
+                                .data(UserListResponse
+                                        .builder()
+                                        .userResponseList(userResponsePage.getContent())
+                                        .totalPages(userResponsePage.getTotalPages())
+                                        .build()
+                                )
+                    .build()
+            );
+        }catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    BaseResponse.builder()
+                            .message(e.getMessage())
+                            .data(null)
+
+            );
+        }
+
+    }
+
+    @PutMapping("/block/{userId}/{active}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> blockOrEnable(@Valid @PathVariable long userId,@Valid @PathVariable long active) {
+        try{
+            UserResponse userResponse = userSevice.blockOrEnable(userId, active > 0);
+            return ResponseEntity.ok(BaseResponse
+                    .builder()
+                    .data(userResponse)
+                    .message("Block user successful")
+                    .build()
+            );
+        }catch (Exception e) {
+            return ResponseEntity.badRequest().body(BaseResponse
+                    .builder()
+                    .data(null)
+                    .message("Block user unsuccessful")
+            );
+        }
     }
 }

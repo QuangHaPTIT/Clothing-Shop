@@ -23,10 +23,10 @@ public class ProductResponse {
     private Float price;
     private String thumbnail;
     private String description;
-    @JsonProperty("create_at")
+    @JsonProperty("created_at")
     private LocalDateTime createdAt;
-    @JsonProperty("update_at")
-    private LocalDateTime updateAt;
+    @JsonProperty("updated_at")
+    private LocalDateTime updatedAt;
     @JsonProperty("category_id")
     private Long categoryId;
     private Category category;
@@ -44,7 +44,7 @@ public class ProductResponse {
                 .thumbnail(product.getThumbnail())
                 .categoryId(product.getCategory().getId())
                 .productImages(fromListProductImage(product.getProductImages()))
-                .updateAt(product.getUpdateAt())
+                .updatedAt(product.getUpdatedAt())
                 .createdAt(product.getCreateAt())
                 .build();
     }

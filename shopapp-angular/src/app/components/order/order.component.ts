@@ -21,6 +21,7 @@ export class OrderComponent implements OnInit{
   couponCode: string = ''; // Mã giảm giá
   totalAmount: number = 0; // Tổng tiền
   products: Product[] = [];
+  cart: Map<number, number> = new Map();
   orderData: OrderDTO = {
     user_id: 5, // Thay bằng user_id thích hợp
     fullname: '', // Khởi tạo rỗng, sẽ được điền từ form
@@ -179,8 +180,29 @@ export class OrderComponent implements OnInit{
     }
   }
 
+  decreaseQuantity(index: number): void {
+    if (this.cartItems[index].quantity > 1) {
+      this.cartItems[index].quantity--;
+      // Cập nhật lại this.cart từ this.cartItems
+      this.updateCartFromCartItems();
+      this.calculateTotal();
+    }
+  }
 
+  increaseQuantity(index: number): void {
+    this.cartItems[index].quantity++;
+    // Cập nhật lại this.cart từ this.cartItems
+    this.updateCartFromCartItems();
+    this.calculateTotal();
+  }
 
+  private updateCartFromCartItems(): void {
+    this.cart.clear();
+    this.cartItems.forEach((item) => {
+      this.cart.set(item.product.id, item.quantity);
+    });
+    this.cartService.setCart(this.cart);
+  }
   // Hàm tính tổng tiền
   calculateTotal(): void {
       this.totalAmount = this.cartItems.reduce(

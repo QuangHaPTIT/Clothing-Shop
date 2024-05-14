@@ -11,6 +11,7 @@ import com.example.ShopApp.exceptions.PermissionDenyException;
 
 import com.example.ShopApp.repositories.RoleRepository;
 import com.example.ShopApp.repositories.UserRepository;
+import com.example.ShopApp.response.ResetPasswordResponse;
 import com.example.ShopApp.response.UserResponse;
 import com.example.ShopApp.sevices.impl.UserSeviceImpl;
 import com.example.ShopApp.utils.MessageKeys;
@@ -20,6 +21,9 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,6 +31,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -143,6 +148,36 @@ public class UserSevice implements UserSeviceImpl {
         return UserResponse.fromUser(userSave);
     }
 
+    @Override
+    @Transactional
+    public ResetPasswordResponse resetPassword(Long userId) throws DataNotFoundException {
+        String newPassword = UUID.randomUUID().toString().substring(0, 6);
+        User existingUser = userRepository.findById(userId).orElseThrow(() -> new DataNotFoundException("User not exist"));
+        String encodePassword = passwordEncoder.encode(newPassword);
+        existingUser.setPassword(encodePassword);
+        userRepository.save(existingUser);
+        return ResetPasswordResponse.builder()
+                .passwordReset(newPassword)
+                .userId(existingUser.getId())
+                .build();
+    }
+
+    @Override
+    public Page<UserResponse> getAllUser(String keyword, int page, int limit) {
+        PageRequest pageRequest = PageRequest.of(page - 1, limit, Sort.by("id").ascending());
+        Page<UserResponse> userResponsePage = userRepository.findAll(keyword, pageRequest).map(UserResponse::fromUser);
+        return userResponsePage;
+    }
+
+    @Override
+    @Transactional
+    public UserResponse blockOrEnable(Long userId, Boolean active) throws DataNotFoundException {
+        User existingUser = userRepository.findById(userId).orElseThrow(
+                () -> new DataNotFoundException("User's id not exist!"));
+        existingUser.setActive(active);
+        userRepository.save(existingUser);
+        return UserResponse.fromUser(existingUser);
+    }
 
 
 }

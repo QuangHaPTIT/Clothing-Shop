@@ -150,7 +150,7 @@
             </tr>
           </thead>
           <tbody>
-            <ng-container *ngFor="let item of cartItems">
+            <ng-container *ngFor="let item of cartItems; let i =index">
               <tr>
                 <td>
                   <div class="product-info">
@@ -162,11 +162,17 @@
                     <span class="product-name">{{ item.product.name }}</span>
                   </div>
                 </td>
-                <td>{{ item.quantity }}</td>
-                <td>{{ item.product.price | number : "1.2-2" }}</td>
                 <td>
-                  {{ item.product.price * item.quantity | number : "1.2-2" }}
+                  <div class="product-quantity">
+                    <div class="border-wrapper">
+                      <button (click)="decreaseQuantity(i)">-</button>
+                      {{ item.quantity }}
+                      <button (click)="increaseQuantity(i)">+</button>
+                    </div>
+                  </div>
                 </td>
+                <td>{{ item.product.price | number : "1.2-2" }}</td>
+                <td>{{ (item.product.price * item.quantity) | number:'1.2-2' }}</td>
                 <td>
                   <a class="nav-link" (click)="removeItem(item.product.id)">
                     <i class="fa-solid fa-trash-can"></i>

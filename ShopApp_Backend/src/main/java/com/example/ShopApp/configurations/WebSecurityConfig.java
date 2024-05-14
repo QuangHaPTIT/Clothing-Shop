@@ -53,6 +53,7 @@ public class WebSecurityConfig {
                                     String.format("%s/users/register", apiPrefix),
                                     String.format("%s/users/login", apiPrefix),
                                     String.format("actuator/**"),
+
                                     // swagger
                                     "/api-docs",
                                     "/api-docs/**",
@@ -80,6 +81,8 @@ public class WebSecurityConfig {
                                     String.format("%s/products/images/*", apiPrefix)).permitAll()
                             .requestMatchers(GET,
                                     String.format("%s/orders/**", apiPrefix)).permitAll()
+                            .requestMatchers(GET,
+                                    String.format("%s/comments**", apiPrefix)).permitAll()
                             .requestMatchers(GET,
                                     String.format("%s/order_details/**", apiPrefix)).permitAll()
                             .requestMatchers(PUT,
