@@ -30,6 +30,18 @@ spring:
     #Phiên bản baseline sẽ = 1 và không thực hiện bất kì thay đổi nào trong db
     baseline-on-migrate: true
     baseline-version: 0
+  kafka:
+    client:
+      dns:
+        lookup: use_dns_cache
+    bootstrap-servers: ${KAFKA_BROKER_SERVER:localhost}:${KAFKA_BROKER_PORT:9092}
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      #transaction-id-prefix: tx.
+      properties:
+        "[spring.json.type.mapping]": category:com.example.ShopApp.entity.Category
+    consumer:
+      value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
 api:
   prefix: api/v1
 

@@ -33,41 +33,29 @@ public class OrderController {
     private final LocalizationUtils localizationUtils;
     @PostMapping("")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<?> createOrder(@Valid @RequestBody OrderDTO orderDTO, BindingResult result){
-        try{
-            if(result.hasErrors()){
-                List<String> errorMessages = result.getFieldErrors()
-                        .stream()
-                        .map(FieldError::getDefaultMessage)
-                        .collect(Collectors.toList());
-                return ResponseEntity.badRequest().body(errorMessages);
-            }
-            OrderResponse orderResponse = orderService.createOrder(orderDTO);
-            return ResponseEntity.ok().body(orderResponse);
-        }catch (Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
+    public ResponseEntity<?> createOrder(@Valid @RequestBody OrderDTO orderDTO, BindingResult result) throws DataNotFoundException {
+        if(result.hasErrors()){
+            List<String> errorMessages = result.getFieldErrors()
+                    .stream()
+                    .map(FieldError::getDefaultMessage)
+                    .collect(Collectors.toList());
+            return ResponseEntity.badRequest().body(errorMessages);
         }
+        OrderResponse orderResponse = orderService.createOrder(orderDTO);
+        return ResponseEntity.ok().body(orderResponse);
     }
 
     @GetMapping("/user/{user_id}")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     public ResponseEntity<?> getOrders(@Valid @PathVariable("user_id") Long userId){
-        try{
-            List<OrderResponse> orderResponses = orderService.getOrderByUserId(userId);
-            return ResponseEntity.ok().body(orderResponses);
-        }catch (Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        List<OrderResponse> orderResponses = orderService.getOrderByUserId(userId);
+        return ResponseEntity.ok().body(orderResponses);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getOrderById(@Valid @PathVariable("id") Long id){
-        try{
-            OrderResponse orderResponse = orderService.getOrderById(id);
-            return ResponseEntity.ok().body(orderResponse);
-        }catch (Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        OrderResponse orderResponse = orderService.getOrderById(id);
+        return ResponseEntity.ok().body(orderResponse);
     }
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")

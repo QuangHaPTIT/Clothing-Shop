@@ -10,6 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Data
 public class CommentResponse {
     @JsonProperty("content")
     private String content;

@@ -7,6 +7,7 @@ import com.example.ShopApp.dtos.ProductImageDTO;
 import com.example.ShopApp.entity.Product;
 import com.example.ShopApp.entity.ProductImage;
 import com.example.ShopApp.exceptions.DataNotFoundException;
+import com.example.ShopApp.exceptions.InvalidParamException;
 import com.example.ShopApp.response.ProductImageResponse;
 import com.example.ShopApp.response.ProductListResponse;
 import com.example.ShopApp.response.ProductResponse;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -92,41 +94,32 @@ public class ProductController {
     }
     @GetMapping("/by-ids")
     public ResponseEntity<?> getProductByIds(@RequestParam("ids") String ids){
-        try{
-            List<Long> productIds = Arrays.stream(ids.split(","))
-                    .map(Long::parseLong)
-                    .collect(Collectors.toList());
-            List<ProductResponse> productResponses = productSevice.findProductByIds(productIds);
-            return ResponseEntity.ok().body(productResponses);
-        }catch (Exception error) {
-            return ResponseEntity.badRequest().body(error.getMessage());
-        }
+        List<Long> productIds = Arrays.stream(ids.split(","))
+                .map(Long::parseLong)
+                .collect(Collectors.toList());
+        List<ProductResponse> productResponses = productSevice.findProductByIds(productIds);
+        return ResponseEntity.ok().body(productResponses);
 
     }
 
     @PostMapping("")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> createProduct(@Valid @RequestBody ProductDTO productDTO, BindingResult result){
+    public ResponseEntity<?> createProduct(@Valid @RequestBody ProductDTO productDTO, BindingResult result) throws DataNotFoundException {
 
-        try{
-            if(result.hasErrors()){
-                List<String> errors = result.getFieldErrors()
-                        .stream()
-                        .map(FieldError::getDefaultMessage)
-                        .collect(Collectors.toList());
-                return ResponseEntity.badRequest().body(errors);
-            }
-            ProductResponse productResponse = productSevice.createProduct(productDTO);
-            return ResponseEntity.ok(productResponse);
-        }catch (Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
+        if(result.hasErrors()){
+            List<String> errors = result.getFieldErrors()
+                    .stream()
+                    .map(FieldError::getDefaultMessage)
+                    .collect(Collectors.toList());
+            return ResponseEntity.badRequest().body(errors);
         }
+        ProductResponse productResponse = productSevice.createProduct(productDTO);
+        return ResponseEntity.ok(productResponse);
     }
     // dùng để upload file ảnh
     @PostMapping(value = "/uploads/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> uploadImages(@ModelAttribute("files") List<MultipartFile> files, @PathVariable("id") Long id) throws IOException {
-        try {
+    public ResponseEntity<?> uploadImages(@ModelAttribute("files") List<MultipartFile> files, @PathVariable("id") Long id) throws IOException, DataNotFoundException, InvalidParamException {
 
             if(files.size() > ProductImage.MAXIMUM_IMAGES_PER_PRODUCT){
                 return ResponseEntity.badRequest().body("You can only upload maximum 5 images with per product");
@@ -154,25 +147,19 @@ public class ProductController {
                 productImages.add(productImageResponse);
             }
             return ResponseEntity.ok().body(productImages);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+
     }
 
     @GetMapping("/images/{imageName}")
-    public ResponseEntity<?> viewImage(@PathVariable String imageName){
-        try{
-            Path imagePath = Paths.get("uploads/" + imageName);
-            UrlResource resource = new UrlResource(imagePath.toUri());
+    public ResponseEntity<?> viewImage(@PathVariable String imageName) throws MalformedURLException {
+        Path imagePath = Paths.get("uploads/" + imageName);
+        UrlResource resource = new UrlResource(imagePath.toUri());
 
-            if(resource.exists()) {
-                return ResponseEntity.ok()
-                        .contentType(MediaType.IMAGE_JPEG)
-                        .body(resource);
-            }else{
-                return ResponseEntity.notFound().build();
-            }
-        }catch (Exception e){
+        if(resource.exists()) {
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_JPEG)
+                    .body(resource);
+        }else{
             return ResponseEntity.notFound().build();
         }
     }

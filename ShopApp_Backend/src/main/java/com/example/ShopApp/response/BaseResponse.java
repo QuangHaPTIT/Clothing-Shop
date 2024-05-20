@@ -8,7 +8,8 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@Data
+//@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BaseResponse{
     private int status;
     private String message;

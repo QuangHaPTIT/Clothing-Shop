@@ -30,9 +30,9 @@ public class CategorySevice implements CategorySeviceImpl{
     }
 
     @Override
-    public CategoryResponse getCategoryById(Long id) {
+    public CategoryResponse getCategoryById(Long id) throws DataNotFoundException {
 
-        Category category = categoryRepository.findById(id).orElseThrow(() ->  new RuntimeException("Category not found"));
+        Category category = categoryRepository.findById(id).orElseThrow(() ->  new DataNotFoundException("Category not found"));
         CategoryResponse categoryResponse = CategoryResponse.builder()
                 .id(category.getId())
                 .name(category.getName())
@@ -51,9 +51,7 @@ public class CategorySevice implements CategorySeviceImpl{
 
     @Override
     @Transactional
-    public CategoryResponse updateCategory(Long categoryId, CategoryDTO categoryDTO) {
-
-        try{
+    public CategoryResponse updateCategory(Long categoryId, CategoryDTO categoryDTO) throws DataNotFoundException {
             Category existCategory = categoryRepository.findById(categoryId).orElseThrow(() -> new DataNotFoundException("Category not found"));
             existCategory.setName(categoryDTO.getName());
             categoryRepository.save(existCategory);
@@ -62,9 +60,6 @@ public class CategorySevice implements CategorySeviceImpl{
                     .name(existCategory.getName())
                     .build();
             return categoryResponse;
-        }catch (Exception e){
-            return null;
-        }
     }
 
     @Override

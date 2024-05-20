@@ -6,6 +6,7 @@ import com.example.ShopApp.dtos.UserLoginDTO;
 import com.example.ShopApp.entity.BaseEntity;
 import com.example.ShopApp.entity.Role;
 import com.example.ShopApp.entity.User;
+import com.example.ShopApp.exceptions.DataNotFoundException;
 import com.example.ShopApp.response.*;
 import com.example.ShopApp.sevices.impl.TokenServiceImpl;
 import com.example.ShopApp.sevices.impl.UserSeviceImpl;
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("${api.prefix}/users")
 @RequiredArgsConstructor
+
 public class UserController {
     private final UserSeviceImpl userSevice;
     private final MessageSource messageSource;
@@ -43,25 +45,21 @@ public class UserController {
     private final LocalizationUtils localizationUtils;
     private final TokenServiceImpl tokenService;
     @PostMapping("/register")
-    public ResponseEntity<?> createUser(@Valid @RequestBody UserDTO userDTO, BindingResult result){
-        try{
-            if(result.hasErrors()){
-                List<String> errorMessage = result.getFieldErrors()
-                        .stream()
-                        .map(FieldError::getDefaultMessage)
-                        .collect(Collectors.toList());
-                return ResponseEntity.badRequest().body(errorMessage);
-            }
-
-            if(!userDTO.getPassword().equals(userDTO.getRetypePassword())){
-                return ResponseEntity.badRequest().body(localizationUtils.getLocalizedMessage(MessageKeys.PASSWORD_NOT_MATCH));
-            }
-
-            UserResponse userResponse = userSevice.createUser(userDTO);
-            return ResponseEntity.ok(userResponse);
-        }catch (Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
+    public ResponseEntity<?> createUser(@Valid @RequestBody UserDTO userDTO, BindingResult result) throws Exception {
+        if(result.hasErrors()){
+            List<String> errorMessage = result.getFieldErrors()
+                    .stream()
+                    .map(FieldError::getDefaultMessage)
+                    .collect(Collectors.toList());
+            return ResponseEntity.badRequest().body(errorMessage);
         }
+
+        if(!userDTO.getPassword().equals(userDTO.getRetypePassword())){
+            return ResponseEntity.badRequest().body(localizationUtils.getLocalizedMessage(MessageKeys.PASSWORD_NOT_MATCH));
+        }
+
+        UserResponse userResponse = userSevice.createUser(userDTO);
+        return ResponseEntity.ok(userResponse);
     }
     private boolean isMobileDevice(String userAgent) {
         // Kiểm tra User-Agent header để xác định thiết bị di động
@@ -69,37 +67,27 @@ public class UserController {
         return userAgent.toLowerCase().contains("mobile");
     }
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@Valid @RequestBody UserLoginDTO userLoginDTO, HttpServletRequest request){
-        try {
-            String userAgent = request.getHeader("User-Agent");
-            String token = userSevice.login(userLoginDTO.getPhoneNumber(), userLoginDTO.getPassword(), userLoginDTO.getRoleId()==null? 1 : userLoginDTO.getRoleId());
-            User user = userSevice.getUserDetailsFromToken(token);
-            TokenResponse tokenResponse = tokenService.addToken(user.getId(), token, isMobileDevice(userAgent));
-            return ResponseEntity.ok(LoginResponse.builder()
-                    .message(localizationUtils.getLocalizedMessage("user.login.login_successfully"))
-                    .token(token)
-                    .refreshToken(tokenResponse.getRefreshToken())
-                    .roles(user.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList()))
-                    .id(user.getId())
-                    .build());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(LoginResponse.builder()
-                    .message(localizationUtils.getLocalizedMessage(MessageKeys.LOGIN_FAILED, e.getMessage()))
-                    .build()
-            );
-
-        }
+    public ResponseEntity<LoginResponse> loginUser(@Valid @RequestBody UserLoginDTO userLoginDTO, HttpServletRequest request) throws Exception {
+        String userAgent = request.getHeader("User-Agent");
+        String token = userSevice.login(userLoginDTO.getPhoneNumber(), userLoginDTO.getPassword(), userLoginDTO.getRoleId()==null? 1 : userLoginDTO.getRoleId());
+        User user = userSevice.getUserDetailsFromToken(token);
+        TokenResponse tokenResponse = tokenService.addToken(user.getId(), token, isMobileDevice(userAgent));
+        return ResponseEntity.ok(LoginResponse.builder()
+                .message(localizationUtils.getLocalizedMessage("user.login.login_successfully"))
+                .token(token)
+                .username(user.getUsername())
+                .tokenType(tokenResponse.getTokenType())
+                .refreshToken(tokenResponse.getRefreshToken())
+                .roles(user.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList()))
+                .id(user.getId())
+                .build());
     }
     @PostMapping("/details")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
-    public ResponseEntity<?> getUserDetails(@RequestHeader("Authorization") String authorizationHeader){
-        try{
-            String token = authorizationHeader.substring(7); //Loại bỏ "Bearer "
-            User user = userSevice.getUserDetailsFromToken(token);
-            return ResponseEntity.ok(UserResponse.fromUser(user));
-        }catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<?> getUserDetails(@RequestHeader("Authorization") String authorizationHeader) throws Exception {
+        String token = authorizationHeader.substring(7); //Loại bỏ "Bearer "
+        User user = userSevice.getUserDetailsFromToken(token);
+        return ResponseEntity.ok(UserResponse.fromUser(user));
     }
 
     @PutMapping("/details/{userId}") // Use the appropriate URL mapping
@@ -107,19 +95,14 @@ public class UserController {
     public ResponseEntity<UserResponse> updateUserDetails(
             @RequestHeader("Authorization") String authorizationHeader,
             @PathVariable Long userId,
-            @RequestBody UserDTO userDTO)
-    {
-        try{
-            String token = authorizationHeader.substring(7);
-            User user = userSevice.getUserDetailsFromToken(token);
-            if(user.getId() != userId){
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            }
-            UserResponse updateUser = userSevice.updateUser(userId, userDTO);
-            return ResponseEntity.ok(updateUser);
-        }catch (Exception e){
-            return ResponseEntity.badRequest().build();
+            @RequestBody UserDTO userDTO) throws Exception {
+        String token = authorizationHeader.substring(7);
+        User user = userSevice.getUserDetailsFromToken(token);
+        if(user.getId() != userId){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
+        UserResponse updateUser = userSevice.updateUser(userId, userDTO);
+        return ResponseEntity.ok(updateUser);
     }
 
     @PostMapping("/refreshToken")
@@ -138,15 +121,8 @@ public class UserController {
     @PutMapping("/resetPassword/{userId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> resetPassword(@Valid @PathVariable Long userId) throws Exception{
-        try{
-            ResetPasswordResponse resetPasswordResponse = userSevice.resetPassword(userId);
-            return ResponseEntity.ok(resetPasswordResponse);
-        }catch (Exception e){
-            return ResponseEntity.badRequest().body(BaseResponse.builder()
-                    .message(e.getMessage())
-                    .build()
-            );
-        }
+        ResetPasswordResponse resetPasswordResponse = userSevice.resetPassword(userId);
+        return ResponseEntity.ok(resetPasswordResponse);
     }
 
     @GetMapping("")
@@ -156,46 +132,29 @@ public class UserController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "12") int limit
     ){
-        try{
-            Page<UserResponse> userResponsePage = userSevice.getAllUser(keyword, page, limit);
-            return ResponseEntity.ok(
-                    BaseResponse.builder()
-                                .data(UserListResponse
-                                        .builder()
-                                        .userResponseList(userResponsePage.getContent())
-                                        .totalPages(userResponsePage.getTotalPages())
-                                        .build()
-                                )
-                    .build()
-            );
-        }catch (Exception e) {
-            return ResponseEntity.badRequest().body(
-                    BaseResponse.builder()
-                            .message(e.getMessage())
-                            .data(null)
-
-            );
-        }
+        Page<UserResponse> userResponsePage = userSevice.getAllUser(keyword, page, limit);
+        return ResponseEntity.ok(
+                BaseResponse.builder()
+                        .data(UserListResponse
+                                .builder()
+                                .userResponseList(userResponsePage.getContent())
+                                .totalPages(userResponsePage.getTotalPages())
+                                .build()
+                        )
+                        .build()
+        );
 
     }
 
     @PutMapping("/block/{userId}/{active}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> blockOrEnable(@Valid @PathVariable long userId,@Valid @PathVariable long active) {
-        try{
-            UserResponse userResponse = userSevice.blockOrEnable(userId, active > 0);
-            return ResponseEntity.ok(BaseResponse
-                    .builder()
-                    .data(userResponse)
-                    .message("Block user successful")
-                    .build()
-            );
-        }catch (Exception e) {
-            return ResponseEntity.badRequest().body(BaseResponse
-                    .builder()
-                    .data(null)
-                    .message("Block user unsuccessful")
-            );
-        }
+    public ResponseEntity<?> blockOrEnable(@Valid @PathVariable long userId,@Valid @PathVariable long active) throws DataNotFoundException {
+        UserResponse userResponse = userSevice.blockOrEnable(userId, active > 0);
+        return ResponseEntity.ok(BaseResponse
+                .builder()
+                .data(userResponse)
+                .message("Block user successful")
+                .build()
+        );
     }
 }

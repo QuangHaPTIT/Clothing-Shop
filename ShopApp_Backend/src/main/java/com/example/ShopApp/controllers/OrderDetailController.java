@@ -40,36 +40,27 @@ public class OrderDetailController {
     // Thêm mới 1 Order Detail
     @PostMapping("")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<?> createOrderDetail(@Valid @RequestBody OrderDetailDTO orderDetailDTO, BindingResult result){
-        try{
-            if(result.hasErrors()){
-                List<String> errorMessages = result.getFieldErrors()
-                        .stream()
-                        .map(FieldError::getDefaultMessage)
-                        .collect(Collectors.toList());
-                return ResponseEntity.badRequest().body(errorMessages);
-            }
-            BaseResponse baseResponse = new BaseResponse();
-            OrderDetailResponse orderDetailResponse = orderDetailService.createOrderDetail(orderDetailDTO);
-            baseResponse.setData(orderDetailResponse);
-            baseResponse.setMessage("Create Order Detail Successfully");
-            return ResponseEntity.ok().body(baseResponse);
-        }catch (Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
+    public ResponseEntity<?> createOrderDetail(@Valid @RequestBody OrderDetailDTO orderDetailDTO, BindingResult result) throws DataNotFoundException {
+        if(result.hasErrors()){
+            List<String> errorMessages = result.getFieldErrors()
+                    .stream()
+                    .map(FieldError::getDefaultMessage)
+                    .collect(Collectors.toList());
+            return ResponseEntity.badRequest().body(errorMessages);
         }
+        BaseResponse baseResponse = new BaseResponse();
+        OrderDetailResponse orderDetailResponse = orderDetailService.createOrderDetail(orderDetailDTO);
+        baseResponse.setData(orderDetailResponse);
+        baseResponse.setMessage("Create Order Detail Successfully");
+        return ResponseEntity.ok().body(baseResponse);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> updateOrderDetail(@PathVariable Long id, @Valid @RequestBody OrderDetailDTO orderDetailDTO){
+    public ResponseEntity<?> updateOrderDetail(@PathVariable Long id, @Valid @RequestBody OrderDetailDTO orderDetailDTO) throws DataNotFoundException {
 
-        try {
-            OrderDetailResponse orderDetailResponse = orderDetailService.updateOrderDetail(id, orderDetailDTO);
-            return ResponseEntity.ok().body(orderDetailResponse);
-        } catch (DataNotFoundException e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        OrderDetailResponse orderDetailResponse = orderDetailService.updateOrderDetail(id, orderDetailDTO);
+        return ResponseEntity.ok().body(orderDetailResponse);
 
     }
 

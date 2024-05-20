@@ -64,4 +64,8 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OrderDetail> orderDetails;
+
+    @ManyToOne
+    @JoinColumn(name = "coupon_id")
+    private Coupon coupon;
 }
