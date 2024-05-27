@@ -6,7 +6,10 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Product } from '../../models/product';
 import { ProductImage } from 'src/app/models/product.image';
 import { environment } from 'src/app/environments/environment';
-
+import { CommentService } from 'src/app/services/comment.service';
+import { Comment } from 'src/app/models/comment';
+import { CommentDTO } from 'src/app/dtos/comment/comment.dto';
+import { UserService } from 'src/app/services/user.service';
 @Component({
   selector: 'app-detail-product',
   templateUrl: './detail-product.component.html',
@@ -18,6 +21,8 @@ export class DetailProductComponent implements OnInit {
   productId: number = 0;
   currentImageIndex: number = 0;
   quantity: number = 1;
+  comments: Comment[] = [];
+  commentContent: string = '';
   constructor(
     private productService: ProductService,
     private cartService: CartService,
@@ -25,19 +30,25 @@ export class DetailProductComponent implements OnInit {
     // private router: Router,
       private activatedRoute: ActivatedRoute,
       private router: Router,
+      private commentService: CommentService,
+      private userService: UserService
     ) {
 
     }
     ngOnInit() {
       // Lấy productId từ URL
       const idParam = this.activatedRoute.snapshot.paramMap.get('id');
+
       debugger
       //this.cartService.clearCart();
       // const idParam = 10 //fake tạm 1 giá trị
       if (idParam !== null) {
         this.productId = +idParam;
       }
+
+
       if (!isNaN(this.productId)) {
+        this.getCommentByProductId(this.productId);
         this.productService.getDetailProduct(this.productId).subscribe({
           next: (response: any) => {
             // Lấy danh sách ảnh sản phẩm và thay đổi URL
@@ -49,6 +60,7 @@ export class DetailProductComponent implements OnInit {
             }
             debugger
             this.product = response
+
             // Bắt đầu với ảnh đầu tiên
             this.showImage(0);
           },
@@ -103,12 +115,57 @@ export class DetailProductComponent implements OnInit {
       }
     }
 
-
+    getCommentByProductId(productId: number): void {
+      debugger
+      if(productId > 0) {
+        this.commentService.getCommentByProductId(productId).subscribe({
+          next: (response: any) => {
+            debugger
+            this.comments = response.data;
+            console.log('Comments:', this.comments);
+          },
+          complete: () => {
+            debugger;
+          },
+          error: (error: any) => {
+            debugger;
+            console.error('Error fetching comment:', error);
+          }
+        });
+      }
+    }
 
     buyNow(product_id: number): void {
       if(product_id > 0) {
         this.cartService.addToCart(product_id, this.quantity);
       }
       this.router.navigate(['/orders']);
+    }
+    addComment() {
+      const userResponse = this.userService.getUserFromLocalStorage();
+      const comment : CommentDTO = {
+        user_id: userResponse?.id ?? 0,
+        product_id: this.productId,
+        content: this.commentContent
+      }
+
+      if(this.commentContent.trim() !== '') {
+        this.commentService.commentProduct(comment).subscribe({
+          next: (response: any) => {
+            debugger
+            this.commentContent = '';
+            this.getCommentByProductId(this.productId);
+          },
+          complete: () => {
+            debugger
+          },
+          error: (error: any) => {
+            debugger
+            console.error('Error adding comment:', error);
+          }
+        });
+      }else{
+        alert('Nội dung bình luận không được để trống');
+      }
     }
 }

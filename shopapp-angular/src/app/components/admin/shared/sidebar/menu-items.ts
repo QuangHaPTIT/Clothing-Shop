@@ -18,30 +18,7 @@ export const ROUTES: RouteInfo[] = [
     extralink: false,
     submenu: []
   },
-  {
-    path: '/component/badges',
-    title: 'Badges',
-    icon: 'bi bi-patch-check',
-    class: '',
-    extralink: false,
-    submenu: []
-  },
-  {
-    path: '/component/buttons',
-    title: 'Button',
-    icon: 'bi bi-hdd-stack',
-    class: '',
-    extralink: false,
-    submenu: []
-  },
-  {
-    path: '/component/card',
-    title: 'Card',
-    icon: 'bi bi-card-text',
-    class: '',
-    extralink: false,
-    submenu: []
-  },
+
   {
     path: '/component/dropdown',
     title: 'Orders',

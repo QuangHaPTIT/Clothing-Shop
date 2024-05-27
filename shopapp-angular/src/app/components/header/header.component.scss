@@ -48,3 +48,11 @@ header {
   color: $shopapp-color;
   /* Change text color to red on hover */
 }
+
+.fixed-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}

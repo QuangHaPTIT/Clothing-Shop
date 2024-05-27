@@ -1,11 +1,11 @@
 <app-header></app-header>
-<div class="container">
+<div class="container custom-margin-top">
   <div class="intro-section">
     <h1></h1>
     <p>Sử dụng Bootstrap</p>
   </div>
   <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-4">
       <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-inner">
           <div
@@ -65,11 +65,21 @@
         <h2 class="display-5 fw-bolder">{{ product?.name }}</h2>
         <div class="fs-5 mb-3">
           Giá:
-          <span class="text-decoration-line-through">{{product?.price }}VND</span>
+          <span class="text-decoration-line-through"
+            >{{ product?.price }}VND</span
+          >
           <span class="ms-2">{{ product?.price }}VND</span>
         </div>
         <p>{{ product?.description }}</p>
-        <input [(ngModel)]="quantity" class="form-control text-center me-3" min="1" id="inputQuantity" type="number" value="1" style="max-width: 4rem" />
+        <input
+          [(ngModel)]="quantity"
+          class="form-control text-center me-3"
+          min="1"
+          id="inputQuantity"
+          type="number"
+          value="1"
+          style="max-width: 4rem"
+        />
         <div class="product-actions">
           <button
             (click)="addToCart()"
@@ -80,17 +90,51 @@
             Thêm vào giỏ hàng
           </button>
           <!-- <button class="btn btn-primary" (click)="addToCart()">Thêm vào giỏ hàng</button> -->
-          <button class="btn btn-outline-dark flex-shrink-0" (click)="buyNow(product?.id ?? 0)" type="button">
+          <button
+            class="btn btn-outline-dark flex-shrink-0"
+            (click)="buyNow(product?.id ?? 0)"
+            type="button"
+          >
             Mua ngay
-        </button>
+          </button>
         </div>
       </div>
-    </div>
-  </div>
-</div>
+
+      <div class="d-flex justify-content-center row">
+        <div class="d-flex flex-column col-md-11">
+          <div class="d-flex flex-row add-comment-section mt-4 mb-4">
+            <img
+              class="img-fluid img-responsive rounded-circle mr-2"
+              src="../../assets/images/users/user1.jpg"
+              width="38"
+            /><input
+              type="text"
+              class="form-control mr-3"
+              placeholder="Add comment"
+              [(ngModel)]="commentContent"
+            /><button class="btn btn-primary" type="button" (click)="addComment()">Comment</button>
+          </div>
+          <div class="coment-bottom bg-white pb-4" *ngFor="let comment of comments; let i = index">
+            <div class="commented-section mt-2" >
+              <div class="d-flex flex-row align-items-center commented-user">
+                <img
+                  class="img-fluid img-responsive rounded-circle mr-2"
+                  src="../../assets/images/users/user3.jpg"
+                  width="30"
+                />
+                <h5 class="mr-2 name-user">{{comment.user.fullname}}</h5>
+              </div>
+              <div class="comment-text-sm">
+                <span>{{comment.content}}</span>
+              </div>
+            </div>
 
 
-<!-- <div class="container px-4 px-lg-5 my-5">
+          </div>
+        </div>
+      </div>
+
+      <!-- <div class="container px-4 px-lg-5 my-5">
   <div class="row gx-4 gx-lg-5 align-items-center">
       <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" src="https://dummyimage.com/600x700/dee2e6/6c757d.jpg" alt="..." /></div>
       <div class="col-md-6">
@@ -111,3 +155,6 @@
       </div>
   </div>
 </div> -->
+    </div>
+  </div>
+</div>
