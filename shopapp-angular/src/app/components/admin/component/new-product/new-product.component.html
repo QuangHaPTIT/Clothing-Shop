@@ -1,0 +1,37 @@
+<div class="modal-content">
+  <div class="modal-header">
+    <h4 class="modal-title">New Product Item</h4>
+
+  </div>
+  <div class="modal-body">
+
+      <div class="form-group">
+        <label for="p_name">Product Name:</label>
+        <input type="text" class="form-control form-control-sm" id="p_name" [(ngModel)]="productName" required>
+      </div>
+      <div class="form-group">
+        <label for="p_price">Price:</label>
+        <input type="number" class="form-control form-control-sm" id="p_price" [(ngModel)]="productPrice" required>
+      </div>
+      <div class="form-group">
+        <label for="p_desc">Description:</label>
+        <input type="text" class="form-control form-control-sm" id="p_desc" [(ngModel)]="productDescription" required>
+      </div>
+      <div class="form-group">
+        <label for="category">Category:</label>
+        <select id="category" class="form-control form-control-sm" [(ngModel)]="selectedCategory">
+          <option disabled selected>Select category</option>
+          <!-- Đoạn này có thể được điền tự động bằng dữ liệu từ backend -->
+          <option *ngFor="let category of categories; let i = index">{{category.name}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="file">Choose Image:</label>
+        <input type="file" class="form-control-file" id="file">
+      </div>
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary" style="height: 40px" (click)="addProduct()">Add Item</button>
+      </div>
+
+  </div>
+</div>

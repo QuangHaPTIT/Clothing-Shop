@@ -23,6 +23,16 @@ export class NavigationComponent implements AfterViewInit, OnInit {
   ngOnInit(): void {
       this.getUserLogin();
   }
+
+  navNewProduct(value: number) {
+    debugger;
+    console.log(value);
+    this.router.navigate(['/component/new-product']);
+  }
+
+  navNewCategory() {
+
+  }
   // This is for Notifications
   notifications: Object[] = [
     {

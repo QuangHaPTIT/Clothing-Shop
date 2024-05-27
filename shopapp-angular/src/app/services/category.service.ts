@@ -16,4 +16,8 @@ export class CategoryService {
       .set('limit', limit.toString());
       return this.http.get<Category[]>(this.apiGetCategories);
   }
+
+  deleteCategory(id: number): Observable<any> {
+    return this.http.delete(`${this.apiGetCategories}/${id}`);
+  }
 }

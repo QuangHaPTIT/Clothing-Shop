@@ -23,10 +23,8 @@
       <span>Create New</span>
     </a>
     <div ngbDropdownMenu>
-      <a class="dropdown-item" href="#">Product</a>
-      <a class="dropdown-item" href="#">Category</a>
-      <div class="dropdown-divider"></div>
-      <a class="dropdown-item" href="#">Something else here</a>
+      <a class="dropdown-item" href="/component/new-product">Product</a>
+      <a class="dropdown-item" (click)="navNewCategory()">Category</a>
     </div>
   </li>
 </ul>

@@ -51,7 +51,7 @@ export const ROUTES: RouteInfo[] = [
     submenu: []
   },
   {
-    path: '/component/pagination',
+    path: '/component/categories',
     title: 'Categories',
     icon: 'bi bi-dice-1',
     class: '',

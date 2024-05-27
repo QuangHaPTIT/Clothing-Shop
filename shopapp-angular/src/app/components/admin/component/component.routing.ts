@@ -11,6 +11,8 @@ import { TableComponent } from './table/table.component';
 import { EditProductComponent } from './edit-product/edit-product.component';
 import { AdminGuard } from 'src/app/guards/admin.guard';
 import { OrderDetailsComponent } from './order-details/order.details.component';
+import { CategoriesComponent } from './categories/categories.component';
+import { NewProductComponent } from './new-product/new-product.component';
 
 
 export const ComponentsRoutes: Routes = [
@@ -21,6 +23,10 @@ export const ComponentsRoutes: Routes = [
 				path: 'table',
 				component: TableComponent
 			},
+      {
+        path: 'categories',
+				component: CategoriesComponent
+      },
 			{
 				path: 'card',
 				component: CardsComponent
@@ -56,6 +62,10 @@ export const ComponentsRoutes: Routes = [
       {
         path: 'order-details/:id',
         component: OrderDetailsComponent
+      },
+      {
+        path: 'new-product',
+        component: NewProductComponent
       }
 		], canActivate: [AdminGuard]
 	}

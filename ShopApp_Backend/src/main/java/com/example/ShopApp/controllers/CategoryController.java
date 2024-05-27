@@ -49,8 +49,8 @@ public class CategoryController {
                 .message("Create category successfully")
                 .data(categoryResponse)
                 .build();
-        this.kafkaTemplate.send("insert-a-category", categoryResponse);//producer
-        this.kafkaTemplate.setMessageConverter(new CategoryMessageConverter());
+//        this.kafkaTemplate.send("insert-a-category", categoryResponse);//producer
+//        this.kafkaTemplate.setMessageConverter(new CategoryMessageConverter());
         return ResponseEntity.ok(baseResponse);
     }
 
@@ -60,7 +60,7 @@ public class CategoryController {
         BaseResponse baseResponse = BaseResponse.builder()
                 .data(categoryResponses)
                 .build();
-        this.kafkaTemplate.send("get-all-categories", categoryResponses);
+//        this.kafkaTemplate.send("get-all-categories", categoryResponses);
 
         return ResponseEntity.ok(baseResponse);
     }

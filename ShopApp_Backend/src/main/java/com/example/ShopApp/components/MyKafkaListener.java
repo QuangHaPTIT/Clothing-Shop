@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-@KafkaListener(id = "groupA", topics = {"get-all-categories","insert-a-category"})
+@KafkaListener(id = "groupA", topics = {"insert-a-category"})
 public class MyKafkaListener {
     @KafkaHandler
     public void listenCategory(CategoryResponse categoryResponse) {

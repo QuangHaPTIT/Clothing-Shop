@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 import { Product } from '../models/product';
+import { ProductDTO } from '../dtos/product/product.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -31,8 +32,12 @@ export class ProductService {
     const params = new HttpParams().set('ids', productIds.join(','));
     return this.http.get<Product[]>(`${this.apiGetProducts}/by-ids`, { params });
   }
-  updateProduct(product: Product): Observable<Product> {
+  updateProduct(product: ProductDTO, productId: number): Observable<Product> {
 
-    return this.http.put<Product>(`${this.apiGetProducts}/${product.id}`, product);
+    return this.http.put<Product>(`${this.apiGetProducts}/${productId}`, product);
+  }
+
+  addProduct(product: ProductDTO): Observable<Product> {
+    return this.http.post<Product>(this.apiGetProducts, product);
   }
 }

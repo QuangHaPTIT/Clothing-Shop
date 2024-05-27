@@ -9,6 +9,7 @@ const FILTER_PAG_REGEX = /[^0-9]/g;
   selector: 'app-ngbd-pagination',
   standalone: true,
   imports: [NgbPaginationModule, NgIf],
+  styleUrls: ['./pagination.component.scss'],
   templateUrl: './pagination.component.html',
 })
 export class NgbdpaginationBasicComponent {
