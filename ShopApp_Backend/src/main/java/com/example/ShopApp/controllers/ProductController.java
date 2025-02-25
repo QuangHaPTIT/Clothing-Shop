@@ -65,7 +65,8 @@ public class ProductController {
                 //Sort.by("createAt").descending()
         );
         logger.info(String.format("keyword: %s, category: %d, page: %d, limit: %d", keyword, categoryId, page, limit));
-        List<ProductResponse> productResponses = productRedisService.getAllProducts(keyword, categoryId, pageRequest);
+        List<ProductResponse> productResponses = null;
+                //productRedisService.getAllProducts(keyword, categoryId, pageRequest);
         if (productResponses!=null && !productResponses.isEmpty()) {
             totalPages = productResponses.get(0).getTotalPages();
         }

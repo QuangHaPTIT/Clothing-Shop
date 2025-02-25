@@ -120,7 +120,7 @@ public class UserController {
 
     @PutMapping("/resetPassword/{userId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> resetPassword(@Valid @PathVariable Long userId) throws Exception{
+    public ResponseEntity<?> resetPassword(@PathVariable Long userId) throws Exception{
         ResetPasswordResponse resetPasswordResponse = userSevice.resetPassword(userId);
         return ResponseEntity.ok(resetPasswordResponse);
     }
@@ -148,7 +148,7 @@ public class UserController {
 
     @PutMapping("/block/{userId}/{active}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> blockOrEnable(@Valid @PathVariable long userId,@Valid @PathVariable long active) throws DataNotFoundException {
+    public ResponseEntity<?> blockOrEnable(@PathVariable long userId,@PathVariable long active) throws DataNotFoundException {
         UserResponse userResponse = userSevice.blockOrEnable(userId, active > 0);
         return ResponseEntity.ok(BaseResponse
                 .builder()
